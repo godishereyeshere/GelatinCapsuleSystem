@@ -1,0 +1,254 @@
+﻿@model GelatinCapsule.Web.Models.Melting.ReleasePermissionViewModel
+@{
+    ViewData["Title"] = "صدور مجوز ساخت";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-clipboard-plus"></i> صدور مجوز ساخت</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+    <div class="row">
+        <!-- ستون ۱: ورودی‌ها -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-primary text-white">
+                    <strong>ورودی اطلاعات</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <label asp-for="Farsidate" class="form-label small"></label>
+                            <input asp-for="Farsidate" class="form-control"
+                                   data-persian-date maxlength="10" dir="ltr" />
+                            <span asp-validation-for="Farsidate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="Shift" class="form-label small"></label>
+                            <select asp-for="Shift" class="form-select">
+                                @foreach (var s in Model.ShiftOptions)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="CCode" class="form-label small"></label>
+                            <select asp-for="CCode" class="form-select" id="cCodeSelect">
+                                @foreach (var c in Model.CCodeOptions)
+                                {
+                                    <option value="@c.Value">@c.Label</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="Machine" class="form-label small"></label>
+                            <input asp-for="Machine" type="number" class="form-control" min="0" max="20" />
+                        </div>
+
+                        <div class="col-6 mb-2">
+                            <label asp-for="Vol0" class="form-label small"></label>
+                            <input asp-for="Vol0" type="text" class="form-control calc-input" dir="ltr" />
+                            <span asp-validation-for="Vol0" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="LagTime" class="form-label small"></label>
+                            <input asp-for="LagTime" type="number" class="form-control calc-input" />
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="Vis0" class="form-label small"></label>
+                            <input asp-for="Vis0" type="text" class="form-control calc-input" dir="ltr" />
+                            <span asp-validation-for="Vis0" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="Vis1" class="form-label small"></label>
+                            <input asp-for="Vis1" type="text" class="form-control calc-input" dir="ltr" />
+                            <span asp-validation-for="Vis1" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label asp-for="LicenseSerial" class="form-label small"></label>
+                            <input asp-for="LicenseSerial" type="number" class="form-control" />
+                        </div>
+                        <div class="col-6 mb-2" id="relatedMeltField" style="display:none;">
+                            <label asp-for="RelatedMeltId" class="form-label small"></label>
+                            <input asp-for="RelatedMeltId" type="number" class="form-control" />
+                        </div>
+
+                        <div class="col-12 mb-2">
+                            <label asp-for="TankNo" class="form-label small"></label>
+                            <input asp-for="TankNo" class="form-control" />
+                        </div>
+                        <div class="col-12 mb-2">
+                            <label asp-for="Notes" class="form-label small"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ستون ۲: محاسبات خودکار -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-success text-white">
+                    <strong>محاسبات خودکار</strong>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <label class="form-label small">رکورد تانک</label>
+                        <input asp-for="FeedRecNo" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">شماره بچ</label>
+                        <input asp-for="BatchNo" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">سریال</label>
+                        <input asp-for="Serial" class="form-control form-control-sm" readonly />
+                    </div>
+                    <hr />
+                    <div class="mb-2">
+                        <label class="form-label small">حجم نهایی (L)</label>
+                        <input asp-for="Vol1" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">معادل خشک (g)</label>
+                        <input asp-for="EqcCapsule" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">آب مورد نیاز (L)</label>
+                        <input asp-for="WtrNeed" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">C0</label>
+                        <input asp-for="C0" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">C1</label>
+                        <input asp-for="C1" class="form-control form-control-sm" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ستون ۳: فرمولاسیون -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-info text-white">
+                    <strong>فرمولاسیون</strong>
+                </div>
+                <div class="card-body p-2">
+                    <table class="table table-sm table-bordered mb-0" id="formulaTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ماده</th>
+                                <th>مقدار (g)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.FormulaRows.Any())
+                            {
+                                @foreach (var row in Model.FormulaRows)
+                                {
+                                    <tr>
+                                        <td>@row.MaterialDisplayName</td>
+                                        <td><strong>@row.RequiredGr.ToString("N4")</strong></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-save"></i> ثبت مجوز
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // وقتی یه ورودی تغییر کرد، محاسبات رو دوباره اجرا کن
+            $('.calc-input, #cCodeSelect').on('change input', function () {
+                recalculate();
+            });
+
+            // محاسبه‌ی اولیه
+            recalculate();
+
+
+            // نمایش فیلد «سریال ملت مربوطه» فقط برای W000
+            function toggleRelatedMelt() {
+                if ($('#cCodeSelect').val() === 'W000') {
+                    $('#relatedMeltField').show();
+                } else {
+                    $('#relatedMeltField').hide();
+                    $('#RelatedMeltId').val('');
+                }
+            }
+            toggleRelatedMelt();
+            $('#cCodeSelect').on('change', toggleRelatedMelt);
+
+
+
+            function recalculate() {
+                const data = {
+                    part: $('#cCodeSelect').val() === 'Y000' ? 'melt' : 'pst',
+                    cCode: $('#cCodeSelect').val(),
+                    farsidate: $('#Farsidate').val(),
+                    machine: parseInt($('#Machine').val()) || 0,
+                    vol0: parseFloat($('#Vol0').val().replace(',', '.')) || 0,
+                    vis0: parseFloat($('#Vis0').val().replace(',', '.')) || 0,
+                    vis1: parseFloat($('#Vis1').val().replace(',', '.')) || 0,
+                    lagTime: parseInt($('#LagTime').val()) || 0
+                };
+
+                $.ajax({
+                    url: '/api/release-permission/calculate',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (res) {
+                        $('#FeedRecNo').val(res.feedRecNo);
+                        $('#BatchNo').val(res.batchNo);
+                        $('#Serial').val(res.serial);
+                        $('#C0').val(res.c0);
+                        $('#C1').val(res.c1);
+                        $('#Vol1').val(res.vol1.toFixed(2));
+                        $('#Wei0').val(res.wei0.toFixed(2));
+                        $('#EqcCapsule').val(res.eqcCapsule.toFixed(2));
+                        $('#WtrNeed').val(res.wtrNeed.toFixed(2));
+
+                        // جدول مواد
+                        const tbody = $('#formulaTable tbody');
+                        tbody.empty();
+                        res.materials.forEach(function (m) {
+                            tbody.append(`
+                                        <tr>
+                                            <td>${m.materialDisplayName}</td>
+                                            <td><strong>${m.requiredGr.toFixed(4)}</strong></td>
+                                        </tr>
+                                    `);
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error('خطا در محاسبه:', xhr);
+                    }
+                });
+            }
+        });
+    </script>
+}9

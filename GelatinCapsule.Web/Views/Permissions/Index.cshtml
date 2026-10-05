@@ -1,0 +1,38 @@
+﻿@model List<GelatinCapsule.Domain.Entities.Security.Role>
+@{
+    ViewData["Title"] = "مدیریت دسترسی‌ها";
+}
+
+<div class="mb-3">
+    <h3><i class="bi bi-key"></i> مدیریت دسترسی‌ها</h3>
+    <p class="text-muted">برای مدیریت دسترسی‌ها، یک نقش انتخاب کنید</p>
+</div>
+
+<div class="row">
+    @foreach (var role in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="mb-1">@role.DisplayName</h5>
+                            <code class="text-muted">@role.Name</code>
+                        </div>
+                        @if (role.IsSystemRole)
+                        {
+                            <span class="badge bg-warning text-dark">سیستمی</span>
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(role.Description))
+                    {
+                        <p class="text-muted small mb-3">@role.Description</p>
+                    }
+                    <a asp-action="Matrix" asp-route-roleId="@role.Id" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-grid-3x3"></i> مدیریت دسترسی‌ها
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

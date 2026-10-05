@@ -1,0 +1,117 @@
+﻿@model GelatinCapsule.Domain.Entities.Hr.Personnel
+@{
+    ViewData["Title"] = "جزئیات پرسنل";
+
+    var positionNames = new Dictionary<string, string>
+            {
+                ["Supervisore"] = "سوپروایزر",
+                ["SheftHeader"] = "سرشیفت",
+                ["GelMaker"] = "ملتر",
+                ["IpQc"] = "ناظر کنترل کیفی",
+                ["TankWasher"] = "شوینده تانک",
+                ["ProductionSupervisor"] = "سوپروایزر تولید",
+                ["ProductionOperator"] = "اپراتور تولید",
+                ["ProductionHelper"] = "کمک تولید",
+                ["SortOperator"] = "اپراتور سورت",
+                ["SortQC"] = "کنترل کیفی سورت",
+                ["WarehouseKeeper"] = "انباردار",
+                ["WarehouseHelper"] = "کمک انباردار",
+                ["Manager"] = "مدیر",
+                ["Supervisor"] = "سرپرست",
+                ["Employee"] = "کارمند"
+            };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-info-circle"></i> جزئیات پرسنل</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">نام و نام خانوادگی</dt>
+            <dd class="col-sm-9"><strong>@Model.FullName</strong></dd>
+
+            <dt class="col-sm-3">کد پرسنلی</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.PersonnelCode))
+                {
+                    <code>@Model.PersonnelCode</code>
+                }
+                else
+                {
+                    <span class="text-muted">—</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">کد ملی</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.NationalCode))
+                {
+                    <span dir="ltr">@Model.NationalCode</span>
+                }
+                else
+                {
+                    <span class="text-muted">—</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">موبایل</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Mobile))
+                {
+                    <span dir="ltr">@Model.Mobile</span>
+                }
+                else
+                {
+                    <span class="text-muted">—</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">سمت‌ها</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Positions))
+                {
+                    var positions = Model.Positions.Split(',');
+                    foreach (var pos in positions)
+                    {
+                        <span class="badge bg-info me-1">
+                            @(positionNames.ContainsKey(pos) ? positionNames[pos] : pos)
+                        </span>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted">—</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">واحد سازمانی</dt>
+            <dd class="col-sm-9">@(Model.Department?.Name ?? "—")</dd>
+
+            <dt class="col-sm-3">وضعیت</dt>
+            <dd class="col-sm-9">
+                @if (Model.IsActive)
+                {
+                    <span class="badge bg-success">فعال</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">غیرفعال</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">تاریخ ثبت</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("yyyy/MM/dd HH:mm")</dd>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <dt class="col-sm-3">توضیحات</dt>
+                <dd class="col-sm-9">@Model.Notes</dd>
+            }
+        </dl>
+    </div>
+</div>

@@ -1,0 +1,252 @@
+﻿@model GelatinCapsule.Domain.Entities.Melting.ReleasePermission
+@{
+    Layout = null;
+    var gelatins = Model.Gelatins.OrderBy(g => g.SortOrder).ToList();
+    var materials = Model.Materials.OrderBy(m => m.SortOrder).ToList();
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>مجوز ساخت ملت - @Model.BatchNo</title>
+    <style>
+        @@page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, sans-serif;
+            font-size: 13px;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 80px;
+        }
+
+        .title {
+            text-align: center;
+            flex: 1;
+        }
+
+            .title h1 {
+                margin: 0;
+                font-size: 22px;
+            }
+
+            .title h2 {
+                margin: 5px 0 0;
+                font-size: 16px;
+                font-weight: normal;
+            }
+
+        .license-number {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+            table td, table th {
+                border: 1px solid #333;
+                padding: 6px 8px;
+            }
+
+        .info-table td {
+            font-size: 13px;
+        }
+
+        .info-table .label {
+            background: #f0f0f0;
+            font-weight: bold;
+            width: 120px;
+        }
+
+        .materials-table {
+            margin-top: 15px;
+        }
+
+            .materials-table th {
+                background: #f0f0f0;
+                font-weight: bold;
+            }
+
+        .gelatin-section {
+            margin-top: 15px;
+        }
+
+            .gelatin-section table {
+                width: 70%;
+            }
+
+        .signatures {
+            margin-top: 40px;
+            display: flex;
+            gap: 10px;
+        }
+
+            .signatures div {
+                flex: 1;
+                border: 1px solid #333;
+                padding: 25px 10px;
+                text-align: center;
+                font-weight: bold;
+            }
+
+        .no-print {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .no-print button {
+                padding: 8px 20px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+        @@media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button onclick="window.print()">🖨️ چاپ</button>
+        <button onclick="window.close()">❌ بستن</button>
+    </div>
+
+    <div class="header">
+        <div class="license-number">
+            شماره ثبت مجوز<br />
+            <span style="font-size: 18px;">@(Model.LicenseSerial?.ToString() ?? "-")</span>
+        </div>
+        <div class="title">
+            <h1>فرم مجوز ساخت ملت</h1>
+            <h2>شرکت ژلاتین کپسول ایران</h2>
+        </div>
+        <div class="logo">
+            <svg width="80" height="80" viewBox="0 0 100 100">
+                <polygon points="50,10 90,80 10,80" fill="#27ae60" />
+                <text x="50" y="65" text-anchor="middle" fill="white" font-size="20" font-weight="bold">IGC</text>
+            </svg>
+        </div>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td class="label">شماره مجوز:</td>
+            <td>@Model.Permission</td>
+            <td class="label">رکورد ذوب:</td>
+            <td>@Model.FeedRecNo</td>
+            <td class="label">کد محصول:</td>
+            <td>@Model.ColorCode</td>
+        </tr>
+        <tr>
+            <td class="label">سریال نامبر:</td>
+            <td>@Model.Serial</td>
+            <td class="label">حجم کل ملت:</td>
+            <td>@Model.Vol0.ToString("N2")</td>
+            <td class="label">شماره بچ:</td>
+            <td><strong>@Model.BatchNo</strong></td>
+        </tr>
+        <tr>
+            <td class="label">تاریخ:</td>
+            <td>@Model.Farsidate</td>
+            <td class="label">شیفت:</td>
+            <td>@Model.Shift</td>
+            <td class="label">ساعت:</td>
+            <td>@Model.CreatedAt.ToLocalTime().ToString("HH:mm")</td>
+        </tr>
+    </table>
+
+    <table class="materials-table">
+        <thead>
+            <tr>
+                <th style="width: 30px;">#</th>
+                <th>نام ماده</th>
+                <th>مقدار ماده (گرم)</th>
+                <th>شماره بچ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var i = 1;
+            }
+            @foreach (var m in materials)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@m.MaterialCode</td>
+                    <td><strong>@m.RequiredGr.ToString("N4")</strong></td>
+                    <td>Refer to Details.</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+
+    <table class="info-table" style="margin-top: 10px;">
+        <tr>
+            <td class="label">آب خالص مورد نیاز (لیتر):</td>
+            <td colspan="3"><strong>@Model.WtrNeed.ToString("N2")</strong></td>
+        </tr>
+    </table>
+
+    @if (gelatins.Any())
+    {
+        <div class="gelatin-section">
+            <h3 style="font-size: 14px; margin: 10px 0;">ژلاتین مصرفی به تفکیک کیفی و بچ:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>نام ژلاتین</th>
+                        <th>مقدار مصرفی</th>
+                        <th>شماره بچ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in gelatins)
+                    {
+                        <tr>
+                            <td>@g.GelatinName</td>
+                            <td>@g.Amount.ToString("N0")</td>
+                            <td>@(g.BatchNo ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="signatures">
+        <div>سرپرست ملتینگ</div>
+        <div>مدیر تولید</div>
+        <div>مدیر کنترل کیفیت</div>
+        <div>مسئول فنی</div>
+    </div>
+</body>
+</html>

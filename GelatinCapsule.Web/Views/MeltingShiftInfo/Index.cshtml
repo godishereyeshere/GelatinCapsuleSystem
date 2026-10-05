@@ -1,0 +1,135 @@
+﻿@model List<GelatinCapsule.Domain.Entities.Melting.ShiftInfo>
+@using GelatinCapsule.Application.Common.Helpers
+@{
+    ViewData["Title"] = "اطلاعات شیفت ملتینگ";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-clock-history"></i> اطلاعات شیفت ملتینگ</h3>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> ثبت شیفت جدید
+    </a>
+</div>
+
+<!-- فیلتر -->
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <label class="form-label small">جستجو بر اساس تاریخ</label>
+                <input type="text" name="farsidate" value="@ViewBag.FilterDate"
+                       class="form-control" placeholder="مثال: 14050708" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-search"></i> جستجو
+                    </button>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(ViewBag.FilterDate as string))
+            {
+                <div class="col-md-2">
+                    <label class="form-label small">&nbsp;</label>
+                    <div class="d-grid">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x"></i> پاک کردن
+                        </a>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+<!-- لیست -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-inbox" style="font-size: 48px;"></i>
+                <p class="mt-2">هیچ شیفتی ثبت نشده است</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>تاریخ</th>
+                            <th>روز</th>
+                            <th>شیفت</th>
+                            <th>گروه</th>
+                            <th>سرشیفت</th>
+                            <th>ملتر ۱</th>
+                            <th>ملتر ۲</th>
+                            <th>شوینده ۱</th>
+                            <th>ساعت ثبت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@PersianDateHelper.FormatFarsiDate(item.Farsidate)</td>
+                                <td>@item.CurrentDay</td>
+                                <td>
+                                    @if (item.Shift == "صبح")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-sun"></i> صبح
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-dark">
+                                            <i class="bi bi-moon"></i> شب
+                                        </span>
+                                    }
+                                </td>
+                                <td><span class="badge bg-info">@(item.Group ?? "-")</span></td>
+                                <td>@(item.SheftHeader ?? "-")</td>
+                                <td>@(item.GelMaker1 ?? "-")</td>
+                                <td>@(item.GelMaker2 ?? "-")</td>
+                                <td>@(item.TankWasher ?? "-")</td>
+                                <td><small>@item.Momtime</small></td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-primary" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id"
+                                              method="post" onsubmit="return confirm('از حذف این شیفت مطمئن هستید؟');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

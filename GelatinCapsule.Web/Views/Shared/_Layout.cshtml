@@ -1,64 +1,212 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GelatinCapsule.Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - سیستم ژلاتین کپسول</title>
+
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" />
+    <!-- Vazirmatn Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Site CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/GelatinCapsule.Web.styles.css" asp-append-version="true" />
+
+    <style>
+        body {
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            background-color: #f5f6fa;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: calc(100vh - 56px);
+            color: white;
+        }
+
+            .sidebar .nav-link {
+                color: rgba(255,255,255,0.8);
+                padding: 12px 20px;
+                border-radius: 8px;
+                margin: 4px 8px;
+                transition: all 0.2s;
+            }
+
+                .sidebar .nav-link:hover {
+                    background-color: rgba(255,255,255,0.1);
+                    color: white;
+                }
+
+                .sidebar .nav-link.active {
+                    background-color: #3498db;
+                    color: white;
+                }
+
+                .sidebar .nav-link i {
+                    margin-left: 8px;
+                    font-size: 18px;
+                }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ecf0f1;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* ===== Select2 RTL Fix ===== */
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            padding: 5px;
+            direction: rtl;
+            text-align: right;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                left: 8px;
+                right: auto;
+                height: 36px;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                padding-right: 8px;
+                padding-left: 25px;
+                text-align: right;
+                line-height: 26px;
+                color: #2c3e50;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__placeholder {
+                color: #6c757d;
+            }
+
+        .select2-container--default .select2-results__option {
+            text-align: right;
+            direction: rtl;
+            padding: 8px 12px;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .select2-search--dropdown .select2-search__field {
+            direction: rtl;
+            text-align: right;
+            padding: 8px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            left: 30px;
+            right: auto;
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GelatinCapsule.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-dark" style="background: linear-gradient(90deg, #2c3e50 0%, #3498db 100%);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-capsule"></i>
+                سیستم ژلاتین کپسول
+            </a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="d-flex align-items-center gap-3">
+                    <span class="user-badge text-dark">
+                        <i class="bi bi-person-circle"></i>
+                        <strong>@User.FindFirst("FullName")?.Value</strong>
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-light">
+                            <i class="bi bi-box-arrow-right"></i> خروج
+                        </button>
+                    </form>
                 </div>
-            </div>
-        </nav>
-    </header>
-    @using System.Security.Claims
+            }
+        </div>
+    </nav>
+
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <div style="position: fixed; top: 10px; left: 10px; z-index: 1000; background: white; padding: 8px 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <span>👤 <strong>@User.FindFirst("FullName")?.Value</strong></span>
-            <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline; margin-right: 10px;">
-                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer;">خروج</button>
-            </form>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3 col-lg-2 p-0 sidebar">
+                    <div class="py-3">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-house-door"></i> داشبورد
+                                </a>
+                            </li>
+                            @await Component.InvokeAsync("SidebarMenu")
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-9 col-lg-10 main-content">
+                    @RenderBody()
+                </div>
+            </div>
         </div>
-        <div style="background: #fff3cd; padding: 5px; position:fixed; top:50px; left:10px; font-size:12px;">
-            UserId: @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value |
-            RoleIds: @string.Join(",", User.FindAll("RoleId").Select(c => c.Value))
+    }
+    else
+    {
+        <div class="container main-content">
+            @RenderBody()
         </div>
     }
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 1405 - GelatinCapsule.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/persian-date-input.js" asp-append-version="true"></script>
+    <script src="~/js/personnel-select.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

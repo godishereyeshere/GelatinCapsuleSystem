@@ -1,0 +1,62 @@
+﻿@model GelatinCapsule.Web.Models.Roles.RoleEditViewModel
+@{
+    ViewData["Title"] = "ویرایش نقش";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-shield-check"></i> ویرایش نقش: @Model.DisplayName</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="IsSystemRole" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" dir="ltr" readonly="@Model.IsSystemRole" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                        @if (Model.IsSystemRole)
+                        {
+                            <small class="text-warning">نام نقش‌های سیستمی قابل تغییر نیست</small>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DisplayName" class="form-label"></label>
+                        <input asp-for="DisplayName" class="form-control" />
+                        <span asp-validation-for="DisplayName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> ذخیره تغییرات
+                </button>
+                <a asp-controller="Permissions" asp-action="Matrix" asp-route-roleId="@Model.Id" class="btn btn-success">
+                    <i class="bi bi-key"></i> مدیریت دسترسی‌ها
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

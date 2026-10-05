@@ -1,0 +1,135 @@
+﻿@model GelatinCapsule.Web.Models.Personnel.PersonnelViewModel
+@{
+    ViewData["Title"] = "پرسنل جدید";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-person-plus"></i> پرسنل جدید</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- اطلاعات شخصی -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <strong><i class="bi bi-person"></i> اطلاعات شخصی</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" autofocus />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PersonnelCode" class="form-label"></label>
+                            <input asp-for="PersonnelCode" class="form-control" dir="ltr" />
+                            <span asp-validation-for="PersonnelCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NationalCode" class="form-label"></label>
+                            <input asp-for="NationalCode" class="form-control" dir="ltr" maxlength="10" />
+                            <span asp-validation-for="NationalCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Mobile" class="form-label"></label>
+                            <input asp-for="Mobile" class="form-control" dir="ltr" maxlength="11" />
+                            <span asp-validation-for="Mobile" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- سمت‌ها -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <strong><i class="bi bi-briefcase"></i> سمت‌ها</strong>
+                    <small class="text-muted d-block mt-1">
+                        می‌توانید چند سمت انتخاب کنید
+                    </small>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @for (int i = 0; i < Model.AvailablePositions.Count; i++)
+                        {
+                            var pos = Model.AvailablePositions[i];
+                            <div class="col-md-4 mb-2">
+                                <div class="form-check">
+                                    <input type="checkbox"
+                                           name="SelectedPositions"
+                                           value="@pos.Code"
+                                           class="form-check-input"
+                                           id="pos_@pos.Code"
+                                    @(pos.IsSelected ? "checked" : "") />
+                                    <label class="form-check-label" for="pos_@pos.Code">
+                                        @pos.DisplayName
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- سازمانی -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <strong><i class="bi bi-diagram-3"></i> سازمانی</strong>
+                </div>
+                <div class="card-body">
+                    <label asp-for="DepartmentId" class="form-label"></label>
+                    <select asp-for="DepartmentId" class="form-select">
+                        <option value="">— انتخاب کنید —</option>
+                        @foreach (var dept in Model.AvailableDepartments)
+                        {
+                            <option value="@dept.Id">@dept.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- وضعیت -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <strong><i class="bi bi-gear"></i> وضعیت</strong>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- توضیحات -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <strong><i class="bi bi-chat-left-text"></i> توضیحات</strong>
+                </div>
+                <div class="card-body">
+                    <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> ذخیره
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

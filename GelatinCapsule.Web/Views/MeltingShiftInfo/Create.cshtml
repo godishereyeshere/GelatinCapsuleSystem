@@ -1,0 +1,241 @@
+﻿@model GelatinCapsule.Web.Models.Melting.ShiftInfoViewModel
+@{
+    ViewData["Title"] = "ثبت شیفت جدید";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-plus-circle"></i> ثبت شیفت جدید - ملتینگ</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <!-- اطلاعات پایه -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white">
+            <strong><i class="bi bi-calendar"></i> اطلاعات پایه</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Farsidate" class="form-label"></label>
+                    <input asp-for="Farsidate" class="form-control"
+                           data-persian-date maxlength="10"
+                           placeholder="1405/05/06" dir="ltr" />
+                    <span asp-validation-for="Farsidate" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Shift" class="form-label"></label>
+                    <select asp-for="Shift" class="form-select">
+                        @foreach (var s in Model.ShiftOptions)
+                        {
+                            <option value="@s">@s</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Shift" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Group" class="form-label"></label>
+                    <select asp-for="Group" class="form-select">
+                        <option value="">— انتخاب کنید —</option>
+                        @foreach (var g in Model.GroupOptions)
+                        {
+                            <option value="@g">@g</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- پرسنل اصلی -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white">
+            <strong><i class="bi bi-people"></i> پرسنل شیفت</strong>
+            <small class="text-muted d-block mt-1">
+                برای انتخاب، در کادر تایپ کنید و از لیست انتخاب کنید
+            </small>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Supervisore" class="form-label"></label>
+                    <select asp-for="Supervisore" class="form-select personnel-select"
+                            data-position="Supervisore">
+                        @if (!string.IsNullOrEmpty(Model.Supervisore))
+                        {
+                            <option value="@Model.Supervisore" selected>@Model.Supervisore</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="SheftHeader" class="form-label"></label>
+                    <select asp-for="SheftHeader" class="form-select personnel-select"
+                            data-position="SheftHeader">
+                        @if (!string.IsNullOrEmpty(Model.SheftHeader))
+                        {
+                            <option value="@Model.SheftHeader" selected>@Model.SheftHeader</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="HelpMelter" class="form-label"></label>
+                    <select asp-for="HelpMelter" class="form-select personnel-select"
+                            data-position="GelMaker">
+                        @if (!string.IsNullOrEmpty(Model.HelpMelter))
+                        {
+                            <option value="@Model.HelpMelter" selected>@Model.HelpMelter</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="GelMaker1" class="form-label"></label>
+                    <select asp-for="GelMaker1" class="form-select personnel-select"
+                            data-position="GelMaker">
+                        @if (!string.IsNullOrEmpty(Model.GelMaker1))
+                        {
+                            <option value="@Model.GelMaker1" selected>@Model.GelMaker1</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="GelMaker2" class="form-label"></label>
+                    <select asp-for="GelMaker2" class="form-select personnel-select"
+                            data-position="GelMaker">
+                        @if (!string.IsNullOrEmpty(Model.GelMaker2))
+                        {
+                            <option value="@Model.GelMaker2" selected>@Model.GelMaker2</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="IpQc" class="form-label"></label>
+                    <select asp-for="IpQc" class="form-select personnel-select"
+                            data-position="IpQc">
+                        @if (!string.IsNullOrEmpty(Model.IpQc))
+                        {
+                            <option value="@Model.IpQc" selected>@Model.IpQc</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="TankWasher" class="form-label"></label>
+                    <select asp-for="TankWasher" class="form-select personnel-select"
+                            data-position="TankWasher">
+                        @if (!string.IsNullOrEmpty(Model.TankWasher))
+                        {
+                            <option value="@Model.TankWasher" selected>@Model.TankWasher</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="TankWasher2" class="form-label"></label>
+                    <select asp-for="TankWasher2" class="form-select personnel-select"
+                            data-position="TankWasher">
+                        @if (!string.IsNullOrEmpty(Model.TankWasher2))
+                        {
+                            <option value="@Model.TankWasher2" selected>@Model.TankWasher2</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- جانشین ها -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white">
+            <strong><i class="bi bi-arrow-repeat"></i> پرسنل جانشین (اختیاری)</strong>
+            <small class="text-muted d-block mt-1">
+                در صورتی که در طول شیفت، پرسنل اصلی تعویض شده باشند
+            </small>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SheftHeaderRep" class="form-label"></label>
+                    <select asp-for="SheftHeaderRep" class="form-select personnel-select"
+                            data-position="SheftHeader">
+                        @if (!string.IsNullOrEmpty(Model.SheftHeaderRep))
+                        {
+                            <option value="@Model.SheftHeaderRep" selected>@Model.SheftHeaderRep</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SheftHeaderRepFrom" class="form-label"></label>
+                    <input asp-for="SheftHeaderRepFrom" class="form-control" placeholder="مثال: 20:00" dir="ltr" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="GelMaker1Rep" class="form-label"></label>
+                    <select asp-for="GelMaker1Rep" class="form-select personnel-select"
+                            data-position="GelMaker">
+                        @if (!string.IsNullOrEmpty(Model.GelMaker1Rep))
+                        {
+                            <option value="@Model.GelMaker1Rep" selected>@Model.GelMaker1Rep</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="GelMaker1RepFrom" class="form-label"></label>
+                    <input asp-for="GelMaker1RepFrom" class="form-control" placeholder="مثال: 22:30" dir="ltr" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="GelMaker2Rep" class="form-label"></label>
+                    <select asp-for="GelMaker2Rep" class="form-select personnel-select"
+                            data-position="GelMaker">
+                        @if (!string.IsNullOrEmpty(Model.GelMaker2Rep))
+                        {
+                            <option value="@Model.GelMaker2Rep" selected>@Model.GelMaker2Rep</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="GelMaker2RepFrom" class="form-label"></label>
+                    <input asp-for="GelMaker2RepFrom" class="form-control" placeholder="مثال: 23:00" dir="ltr" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TankWasherRep" class="form-label"></label>
+                    <select asp-for="TankWasherRep" class="form-select personnel-select"
+                            data-position="TankWasher">
+                        @if (!string.IsNullOrEmpty(Model.TankWasherRep))
+                        {
+                            <option value="@Model.TankWasherRep" selected>@Model.TankWasherRep</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TankWasherRepFrom" class="form-label"></label>
+                    <input asp-for="TankWasherRepFrom" class="form-control" placeholder="مثال: 21:00" dir="ltr" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> ذخیره
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // راه‌اندازی Select2 برای همه پرسنل‌ها
+            $('.personnel-select').each(function () {
+                const position = $(this).data('position') || '';
+                initPersonnelSelect(this, position);
+            });
+        });
+    </script>
+}

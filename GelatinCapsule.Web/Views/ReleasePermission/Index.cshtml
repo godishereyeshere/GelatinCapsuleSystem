@@ -1,0 +1,118 @@
+﻿@model List<GelatinCapsule.Domain.Entities.Melting.ReleasePermission>
+@{
+    ViewData["Title"] = "مجوزهای ساخت";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-clipboard-check"></i> مجوزهای ساخت ملت و پیست</h3>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> مجوز جدید
+    </a>
+</div>
+
+<!-- فیلتر -->
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2">
+            <div class="col-md-4">
+                <input type="text" name="search" value="@ViewBag.Search"
+                       class="form-control" placeholder="جستجو (رکورد تانک، شماره بچ، تاریخ)" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i> جستجو
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-inbox" style="font-size: 48px;"></i>
+                <p class="mt-2">هیچ مجوزی ثبت نشده است</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>رکورد تانک</th>
+                            <th>شماره بچ</th>
+                            <th>تاریخ</th>
+                            <th>شیفت</th>
+                            <th>محصول</th>
+                            <th>حجم اولیه</th>
+                            <th>معادل خشک</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ var i = 1; }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td><code>@item.FeedRecNo</code></td>
+                                <td>
+                                    <strong>@item.BatchNo</strong>
+                                    @if (item.CCode == "Y000")
+                                    {
+                                        <span class="badge bg-warning text-dark">زرد</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark">پیست</span>
+                                    }
+                                </td>
+                                <td>@item.Farsidate</td>
+                                <td>@item.Shift</td>
+                                <td>@(item.ProductName ?? "-")</td>
+                                <td>@item.Vol0.ToString("N2") L</td>
+                                <td>@item.EqcCapsule.ToString("N2") g</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-info" title="جزئیات">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-primary" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Print" asp-route-id="@item.Id" target="_blank"
+                                           class="btn btn-sm btn-outline-success" title="چاپ">
+                                            <i class="bi bi-printer"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id"
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('از حذف این مجوز مطمئن هستید؟');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

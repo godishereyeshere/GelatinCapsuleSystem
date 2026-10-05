@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\GelatinCapsule.Web.props" />
-</Project>

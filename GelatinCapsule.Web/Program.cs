@@ -1,14 +1,23 @@
+﻿using System.Globalization;
 using GelatinCapsule.Application.Common.Interfaces;
 using GelatinCapsule.Infrastructure.Persistence;
 using GelatinCapsule.Infrastructure.Persistence.Seed;
 using GelatinCapsule.Infrastructure.Services;
 using GelatinCapsule.Web.Authorization;
+using GelatinCapsule.Web.Infrastructure;
 using GelatinCapsule.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ============ Culture ============
+// از InvariantCulture استفاده می‌کنیم که اعشارش نقطه‌ست
+// کاربر می‌تونه هم نقطه و هم ویرگول وارد کنه (با ModelBinder سفارشی)
+var invariantCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentCulture = invariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = invariantCulture;
 
 // ============ Connection String ============
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -30,6 +39,8 @@ builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IDataScopeService, DataScopeService>();
+builder.Services.AddScoped<IReleasePermissionService, ReleasePermissionService>();
 builder.Services.AddHttpContextAccessor();
 
 // ============ Cookie Authentication ============
@@ -51,12 +62,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-// ============ MVC ============
-builder.Services.AddControllersWithViews();
+// ============ MVC + Custom Decimal ModelBinder ============
+builder.Services.AddControllersWithViews(options =>
+{
+    // DecimalModelBinder رو در ابتدای لیست می‌ذاریم که اولین binder باشه
+    options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+});
 
 var app = builder.Build();
 
-// ============ Seed ============
+// ============ Seed Database ============
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

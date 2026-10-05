@@ -1,0 +1,18 @@
+﻿@model IEnumerable<dynamic>
+
+@foreach (var module in Model)
+{
+    <li class="nav-item">
+        <div class="nav-section-title" style="color: rgba(255,255,255,0.4); font-size: 11px; padding: 10px 20px 5px; text-transform: uppercase;">
+            @module.DisplayName
+        </div>
+    </li>
+    foreach (var form in module.Forms)
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="@form.ControllerName" asp-action="@(form.ActionName ?? "Index")">
+                <i class="bi bi-circle"></i> @form.DisplayName
+            </a>
+        </li>
+    }
+}

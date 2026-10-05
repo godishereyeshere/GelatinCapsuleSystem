@@ -1,0 +1,217 @@
+﻿@model List<GelatinCapsule.Domain.Entities.Hr.Personnel>
+@{
+    ViewData["Title"] = "مدیریت پرسنل";
+    var search = ViewBag.Search as string;
+    var activeOnly = ViewBag.ActiveOnly as bool?;
+    var totalCount = (int)ViewBag.TotalCount;
+    var activeCount = (int)ViewBag.ActiveCount;
+
+    // برای نمایش نام سمت‌ها
+    var positionNames = new Dictionary<string, string>
+            {
+                ["Supervisore"] = "سوپروایزر",
+                ["SheftHeader"] = "سرشیفت",
+                ["GelMaker"] = "ملتر",
+                ["IpQc"] = "ناظر کنترل کیفی",
+                ["TankWasher"] = "شوینده تانک",
+                ["ProductionSupervisor"] = "سوپروایزر تولید",
+                ["ProductionOperator"] = "اپراتور تولید",
+                ["ProductionHelper"] = "کمک تولید",
+                ["SortOperator"] = "اپراتور سورت",
+                ["SortQC"] = "کنترل کیفی سورت",
+                ["WarehouseKeeper"] = "انباردار",
+                ["WarehouseHelper"] = "کمک انباردار",
+                ["Manager"] = "مدیر",
+                ["Supervisor"] = "سرپرست",
+                ["Employee"] = "کارمند"
+            };
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-person-badge"></i> مدیریت پرسنل</h3>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-person-plus"></i> پرسنل جدید
+    </a>
+</div>
+
+<!-- آمار -->
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted">کل پرسنل</small>
+                        <h4 class="mb-0">@totalCount</h4>
+                    </div>
+                    <i class="bi bi-people text-primary" style="font-size:32px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted">پرسنل فعال</small>
+                        <h4 class="mb-0 text-success">@activeCount</h4>
+                    </div>
+                    <i class="bi bi-check-circle text-success" style="font-size:32px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- فیلترها -->
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small">جستجو</label>
+                <input type="text" name="search" value="@search"
+                       class="form-control" placeholder="نام، کد پرسنلی، موبایل..." />
+            </div>
+            <div class="col-md-3">
+                <div class="form-check mt-4">
+                    <input type="checkbox" name="activeOnly" value="true"
+                           class="form-check-input" id="activeOnly"
+                    @(activeOnly == true ? "checked" : "") />
+                    <label class="form-check-label" for="activeOnly">فقط فعال‌ها</label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> جستجو
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x"></i> پاک کردن
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- لیست -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-inbox" style="font-size: 48px;"></i>
+                <p class="mt-2">هیچ پرسنلی ثبت نشده است</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>نام و نام خانوادگی</th>
+                            <th>کد پرسنلی</th>
+                            <th>موبایل</th>
+                            <th>سمت‌ها</th>
+                            <th>واحد</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>
+                                    <strong>@item.FullName</strong>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.PersonnelCode))
+                                    {
+                                        <code>@item.PersonnelCode</code>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Mobile))
+                                    {
+                                        <span dir="ltr">@item.Mobile</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Positions))
+                                    {
+                                        var positions = item.Positions.Split(',');
+                                        foreach (var pos in positions)
+                                        {
+                                            <span class="badge bg-info me-1">
+                                                @(positionNames.ContainsKey(pos) ? positionNames[pos] : pos)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>@(item.Department?.Name ?? "—")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">فعال</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">غیرفعال</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-info" title="جزئیات">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-primary" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id"
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('از حذف این پرسنل مطمئن هستید؟');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,147 @@
+﻿@model GelatinCapsule.Web.Models.Melting.FormulaEditViewModel
+@{
+    ViewData["Title"] = $"فرمولاسیون {Model.ProductionTypeDisplayName}";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>
+        <i class="bi bi-list-check"></i>
+        فرمولاسیون «@Model.ProductionTypeDisplayName»
+        <small class="text-muted">(<code>@Model.ProductionTypeCode</code>)</small>
+    </h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<form asp-action="Formulas" method="post">
+    <input type="hidden" name="ProductionTypeId" value="@Model.ProductionTypeId" />
+    <input type="hidden" name="ProductionTypeCode" value="@Model.ProductionTypeCode" />
+    <input type="hidden" name="ProductionTypeDisplayName" value="@Model.ProductionTypeDisplayName" />
+
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <strong>مواد مصرفی</strong>
+            <button type="button" class="btn btn-sm btn-light" onclick="addRow()">
+                <i class="bi bi-plus-circle"></i> افزودن ماده
+            </button>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-sm mb-0" id="formulaTable">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px;">#</th>
+                        <th>ماده</th>
+                        <th style="width: 220px;">درصد (نسبت به معادل خشک)</th>
+                        <th style="width: 100px;">ترتیب</th>
+                        <th style="width: 60px;">حذف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Rows.Count; i++)
+                    {
+                        var row = Model.Rows[i];
+                        <tr>
+                            <td class="row-num">@(i + 1)</td>
+                            <td>
+                                <select name="MaterialId" class="form-select form-select-sm">
+                                    <option value="">— انتخاب ماده —</option>
+                                    @foreach (var m in Model.AvailableMaterials)
+                                    {
+                                        <option value="@m.Id"
+                                                selected="@(m.Id == row.MaterialId ? "selected" : null)">
+                                            @m.DisplayName (@m.Code)
+                                        </option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="Percentage"
+                                       value="@row.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                       class="form-control form-control-sm" dir="ltr" />
+                            </td>
+                            <td>
+                                <input type="number" name="SortOrder" value="@row.SortOrder"
+                                       class="form-control form-control-sm" />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="removeRow(this)">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>نکته:</strong> درصد هر ماده نسبت به <strong>معادل خشک (eqccapsule)</strong> محاسبه میشه.
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-check-circle"></i> ذخیره فرمولاسیون
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        const materialOptions = `@Html.Raw(string.Join("", Model.AvailableMaterials.Select(m =>
+                $"<option value=\"{m.Id}\">{m.DisplayName} ({m.Code})</option>")))`;
+
+        function addRow() {
+            const tbody = document.querySelector('#formulaTable tbody');
+            const rowCount = tbody.querySelectorAll('tr').length;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                        <td class="row-num">${rowCount + 1}</td>
+                        <td>
+                            <select name="MaterialId" class="form-select form-select-sm">
+                                <option value="">— انتخاب ماده —</option>
+                                ${materialOptions}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="Percentage" value="0"
+                                   class="form-control form-control-sm" dir="ltr" />
+                        </td>
+                        <td>
+                            <input type="number" name="SortOrder" value="${rowCount + 1}"
+                                   class="form-control form-control-sm" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                    onclick="removeRow(this)">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </td>
+                    `;
+            tbody.appendChild(tr);
+        }
+
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+            renumberRows();
+        }
+
+        function renumberRows() {
+            document.querySelectorAll('#formulaTable tbody tr').forEach((tr, idx) => {
+                tr.querySelector('.row-num').textContent = idx + 1;
+            });
+        }
+    </script>
+}

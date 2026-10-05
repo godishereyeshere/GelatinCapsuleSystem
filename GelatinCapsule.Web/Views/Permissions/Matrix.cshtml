@@ -1,0 +1,140 @@
+﻿@model GelatinCapsule.Web.Models.Permissions.PermissionMatrixViewModel
+@{
+    ViewData["Title"] = $"دسترسی‌های {Model.RoleDisplayName}";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3><i class="bi bi-key"></i> دسترسی‌های نقش «@Model.RoleDisplayName»</h3>
+        <code class="text-muted">@Model.RoleName</code>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<form asp-action="Matrix" method="post">
+    <input type="hidden" name="RoleId" value="@Model.RoleId" />
+
+    <!-- ========================================== -->
+    <!-- بخش ۱: دسترسی به ماژول‌ها -->
+    <!-- ========================================== -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <strong><i class="bi bi-diagram-3"></i> دسترسی به ماژول‌ها (واحدها)</strong>
+            <small class="text-muted d-block mt-1">
+                اگه کاربر به ماژول دسترسی نداشته باشه، هیچ‌کدوم از فرم‌های اون ماژول براش نمایش داده نمیشه
+            </small>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var m in Model.ModuleAccesses)
+                {
+                    <div class="col-md-3 mb-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="module_@m.ModuleId"
+                                   id="module_@m.ModuleId"
+                                   value="true"
+                            @(m.HasAccess ? "checked" : "") />
+                            <label class="form-check-label" for="module_@m.ModuleId">
+                                @m.ModuleDisplayName
+                            </label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- بخش ۲: ماتریس دسترسی فرم‌ها -->
+    <!-- ========================================== -->
+    @foreach (var module in Model.Modules)
+    {
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <strong><i class="bi bi-folder"></i> ماژول: @module.ModuleDisplayName</strong>
+                <div class="d-flex gap-2 float-start">
+                    <button type="button" class="btn btn-sm btn-outline-success" onclick="checkAllInModule(@module.ModuleId, true)">
+                        <i class="bi bi-check-all"></i> تیک همه
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="checkAllInModule(@module.ModuleId, false)">
+                        <i class="bi bi-x"></i> برداشتن همه
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0" id="table_module_@module.ModuleId">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 250px;">فرم</th>
+                                @foreach (var col in Model.PermissionColumns)
+                                {
+                                    <th class="text-center">@col.DisplayName</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var formRow in module.Forms)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@formRow.FormDisplayName</strong>
+                                        <br />
+                                        <code class="text-muted small">@formRow.FormCode</code>
+                                    </td>
+                                    @foreach (var col in Model.PermissionColumns)
+                                    {
+                                        var isChecked = formRow.GrantedPermissionIds.Contains(col.Id);
+                                        <td class="text-center">
+                                            <input type="checkbox"
+                                                   class="form-check-input module-@module.ModuleId"
+                                                   name="perm_@(formRow.FormId)_@(col.Id)"
+                                                   value="true"
+                                            @(isChecked ? "checked" : "") />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- دکمه‌ی ذخیره -->
+    <div class="card border-0 shadow-sm mb-4 sticky-bottom" style="background: #f8f9fa;">
+        <div class="card-body d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> ذخیره تغییرات
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+            <span class="text-muted align-self-center mr-auto">
+                <i class="bi bi-info-circle"></i>
+                بعد از ذخیره، کاربران باید مجدداً وارد شوند تا تغییرات اعمال شود
+            </span>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function checkAllInModule(moduleId, checked) {
+            document.querySelectorAll('.module-' + moduleId).forEach(function (cb) {
+                cb.checked = checked;
+            });
+        }
+    </script>
+}

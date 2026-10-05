@@ -1,0 +1,54 @@
+﻿@model GelatinCapsule.Web.Models.Roles.RoleEditViewModel
+@{
+    ViewData["Title"] = "نقش جدید";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-shield-plus"></i> نقش جدید</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" dir="ltr" placeholder="مثال: Production" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                        <small class="text-muted">نام انگلیسی برای شناسه‌ی فنی (بدون فاصله)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DisplayName" class="form-label"></label>
+                        <input asp-for="DisplayName" class="form-control" placeholder="مثال: اپراتور تولید" />
+                        <span asp-validation-for="DisplayName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> ذخیره
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
